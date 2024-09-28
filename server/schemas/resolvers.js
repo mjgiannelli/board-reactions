@@ -1,7 +1,7 @@
 const { AuthenticationError } = require('apollo-server-express');
 const { Game, Comment, User, Favorite }  = require('../models');
 const { signToken } = require('../utils/auth');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 const resolvers = {
     Query: {

@@ -65,7 +65,6 @@ const Home = () => {
 
     return(
         <div>
-
           <h1 className="homepageTitle">BOARD REACTIONS!</h1>
         <Box>
         {loading ? (
@@ -73,7 +72,6 @@ const Home = () => {
           ) : (
         <Grid container spacing={0} direction="row" justifyContent="center" alignItems="center">
         {allGames.map((game, i) => (
-            
           <Grid i xs={1} key={game.game_name} >
             <img
               src={require(`../assets/${game.image}.jpg`).default}

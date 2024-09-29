@@ -21,6 +21,7 @@ import Footer from './components/Footer';
 import SubmitGame from './pages/SubmitGame';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import Header from './components/header';
 
 const httpLink = createHttpLink({
   uri: '/graphql',
@@ -47,7 +48,7 @@ function App() {
     <ApolloProvider client={client}>
       <Router>
         <div>
-          <Nav />
+          <Header />
           <Switch>
             <Route exact path="/" component={Home} />
             <Route exact path="/login" component={Login} />

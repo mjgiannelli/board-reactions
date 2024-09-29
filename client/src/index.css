@@ -20,3 +20,7 @@ code {
   padding: 20rem 0 0 35rem;
 }
 
+a {
+  cursor: pointer;
+}
+

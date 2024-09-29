@@ -15,26 +15,19 @@ const Nav = () => {
   return (
     <div>
       <ul className="navigation-menu">
-        <li>
-          <Link to="/">Home</Link>
-        </li>
-        <li>
-          {loggedIn ? (
-            <Link to="/" onClick={() => Auth.logout()}>
-              Logout
-            </Link>
-          ) : (
-            <Link to="/login">Login</Link>
-          )}
-        </li>
-        <li>
-          <Link to="/games">Games</Link>
-        </li>
         {loggedIn ? (
           <>
             <li>
+              <Link to="/" onClick={() => Auth.logout()}>
+                Logout
+              </Link>
+            </li>
+            <li>
               {/* we will set this to logged in user eventually */}
               <Link to={`/profile/${loggedInUsername}`}>Profile</Link>
+            </li>
+            <li>
+              <Link to="/games">Games</Link>
             </li>
             <li>
               <Link to="/submitgame">Add Game</Link>
@@ -43,7 +36,19 @@ const Nav = () => {
               <Link to="/donate">Donations</Link>
             </li>
           </>
-        ) : null}
+        ) : (
+          <>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/login">Login</Link>
+            </li>
+            <li>
+              <Link to="/games">Games</Link>
+            </li>
+          </>
+        )}
       </ul>
     </div>
   );

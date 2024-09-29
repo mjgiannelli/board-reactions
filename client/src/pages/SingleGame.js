@@ -97,17 +97,19 @@ const SingleGame = (props) => {
                   <Typography gutterBottom variant="h7" component="div">
                     {singleGame.game_description}
                   </Typography>
-                  <IconButton
-                    onClick={handleHeartClick}
-                    aria-label="add to favorites"
-                  >
-                    <FavoriteIcon />
-                    {message && (
-                      <div>
-                        <p>{message}</p>
-                      </div>
-                    )}
-                  </IconButton>
+                  {loggedInUser ? (
+                    <IconButton
+                      onClick={handleHeartClick}
+                      aria-label="add to favorites"
+                    >
+                      <FavoriteIcon />
+                      {message && (
+                        <div>
+                          <p>{message}</p>
+                        </div>
+                      )}
+                    </IconButton>
+                  ) : null}
                 </CardContent>
               </Card>
             )}

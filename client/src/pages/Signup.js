@@ -13,6 +13,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
+import { validateEmail } from '../utils/helpers';
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -22,6 +23,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const Signup = () => {
+  const [message, setMessage] = useState('');
   const [addUser] = useMutation(ADD_USER);
 
   const securityQuestions = [
@@ -44,6 +46,7 @@ const Signup = () => {
 
   // collect user inputs
   const handleChange = (event) => {
+    setMessage('');
     const { name, value } = event.target;
 
     setFormState({
@@ -54,6 +57,7 @@ const Signup = () => {
 
   // collect questions user selects for security questions
   const handleSelection = (event) => {
+    setMessage('');
     const { id, value } = event.target;
 
     setFormState({
@@ -65,6 +69,25 @@ const Signup = () => {
   // submit the collected data from user to create a new user and add them to the db
   const handleFormSubmit = async (event) => {
     event.preventDefault();
+    if (formState.password.length < 6) {
+      setMessage('Password needs to be at least 6 characters.');
+      return;
+    }
+    if (
+      formState.answerOne === '' ||
+      formState.answerTwo === '' ||
+      formState.email === '' ||
+      formState.questionOne === '' ||
+      formState.questionTwo === '' ||
+      formState.username === ''
+    ) {
+      setMessage('Please make sure all fields are filled out.');
+      return;
+    }
+    if (!validateEmail(formState.email)) {
+      setMessage('Please enter a valid email');
+      return;
+    }
     const mutationResponse = await addUser({
       variables: {
         email: formState.email,
@@ -77,7 +100,7 @@ const Signup = () => {
       },
     });
 
-    const username = formState.username
+    const username = formState.username;
     const token = mutationResponse.data.addUser.token;
     Auth.login(token, username);
   };
@@ -223,6 +246,17 @@ const Signup = () => {
                   htmlFor="answerOne"
                 />
               </Item>
+              {message ? (
+                <p
+                  style={{
+                    color: 'red',
+                    textAlign: 'center',
+                    marginTop: '1rem',
+                  }}
+                >
+                  {message}
+                </p>
+              ) : null}
               <Item>
                 <Button
                   sx={{ width: 200 }}

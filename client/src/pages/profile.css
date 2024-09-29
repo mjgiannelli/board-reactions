@@ -9,6 +9,13 @@
   display: flex;
   flex-direction: column;
   text-align: center;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+}
+
+.profile-header-me a {
+  width: 35rem;
 }
 
 .profile-header-not-me {

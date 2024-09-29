@@ -42,6 +42,10 @@ const FriendList = ({ friendCount, username, friends }) => {
     }
   };
 
+  const handleFriendClick = (username) => {
+    window.location.assign(`/profile/${username}`);
+  };
+
   return (
     <div>
       <Box sx={{ flexGrow: 1, m: 2 }}>
@@ -66,10 +70,9 @@ const FriendList = ({ friendCount, username, friends }) => {
                     variant="contained"
                     color="success"
                     sx={{ m: 1, mr: 20, width: 300 }}
+                    onClick={() => handleFriendClick(friend.username)}
                   >
-                    <Link style={linkStyle} to={`/profile/${friend.username}`}>
-                      {friend.username}
-                    </Link>
+                    {friend.username}
                   </Button>
                   {/* check to see if username equals the logged in user - if does, include remove friend btn */}
                   {username === loggedInUser ? (

@@ -8,12 +8,10 @@ import FriendList from '../components/FriendList';
 import FavoriteGamesList from '../components/FavoriteGamesList';
 import CommentList from '../components/CommentList';
 import Auth from '../utils/auth';
-
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
+import './profile.css';
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -148,163 +146,135 @@ const Profile = () => {
       // check if user is loggedIn -- scenario: user has games and there is a logged in user
       if (loggedIn) {
         return (
-          <div>
-            <Box sx={{ flexGrow: 1, m: 2 }}>
-              <Grid
-                container
-                spacing={1}
-                direction="column"
-                justifyContent="center"
-                alignItems="center"
-              >
-                {/* if logged in user = the username in the URL, display one header, if not, display another header and include add friend button */}
-                {loggedInUser === userParam ? (
-                  <h1>
-                    Welcome to your profile,{' '}
-                    <span className="username-style2">{loggedInUser}</span>!
-                  </h1>
-                ) : (
-                  <Grid item xs={12}>
-                    <Item>
-                      <h1>Welcome to {userParam}'s profile!</h1>
-                    </Item>
-                    <Item>
-                      {isMyFriend ? (
-                        <Button
-                          variant="contained"
-                          color="error"
-                          onClick={() => {
-                            handleRemoveFriend(user._id);
-                          }}
-                        >
-                          + Remove Friend
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="contained"
-                          color="success"
-                          onClick={() => {
-                            handleAddFriend(user._id);
-                          }}
-                        >
-                          + Add Friend
-                        </Button>
-                      )}
-
-                      {message && (
-                        <div>
-                          <p>{message}</p>
-                        </div>
-                      )}
-                    </Item>
-                  </Grid>
-                )}
-                {/* if logged in user = the username in the URL, display a link to submit a game or don't if you're on another user's page */}
-                {loggedInUser === userParam ? (
-                  <Grid item xs={12}>
-                    <Item>
-                      <Link style={linkStyle} to="/submitgame">
-                        Didn't see a game you like listed on the all games page?
-                        Submit A Game!
-                      </Link>
-                    </Item>
-                  </Grid>
-                ) : null}
-                <Grid item xs={12}>
+          <div className="profile">
+            {/* if logged in user = the username in the URL, display one header, if not, display another header and include add friend button */}
+            {loggedInUser === userParam ? (
+              <div className="profile-header-me">
+                <h1>
+                  Welcome to your profile,{' '}
+                  <span className="username-style2">{loggedInUser}</span>!
+                </h1>
+                <Link style={linkStyle} to="/submitgame">
+                  Didn't see a game you like listed on the all games page?
+                  Submit A Game!
+                </Link>
+              </div>
+            ) : (
+              <div className="profile-header-not-me">
+                <h1>Welcome to {userParam}'s profile!</h1>
+                <div className="friend-btn">
+                  {isMyFriend ? (
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => {
+                        handleRemoveFriend(user._id);
+                      }}
+                    >
+                      + Remove Friend
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      color="success"
+                      onClick={() => {
+                        handleAddFriend(user._id);
+                      }}
+                    >
+                      + Add Friend
+                    </Button>
+                  )}
+                  {message && (
+                    <div>
+                      <p>{message}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            <div className="profile-content">
+              <div className="user-data">
+                {user.friendCount > 0 ? (
                   <FriendList
                     username={user.username}
                     friendCount={user.friendCount}
                     friends={user.friends}
                   />
-                </Grid>
-                <FavoriteGamesList
-                  username={user.username}
-                  games={userFavoriteGames}
-                />
-                <CommentList
-                  username={user.username}
-                  games={userCommentedGames}
-                />
-              </Grid>
-            </Box>
+                ) : loggedInUser === userParam ? (
+                  <p>{loggedInUser}, make some friends!</p>
+                ) : (
+                  <p>{userParam} has not added any friends!</p>
+                )}
+                {user.gamesCount > 0 ? (
+                  <FavoriteGamesList
+                    username={user.username}
+                    games={userFavoriteGames}
+                  />
+                ) : loggedInUser === userParam ? (
+                  <p>{loggedInUser}, go favorite some games!</p>
+                ) : (
+                  <p>{userParam} has not favorited any games!</p>
+                )}
+              </div>
+              <div className="user-comments">
+                {userCommentedGames && userCommentedGames.length > 0 ? (
+                  <CommentList
+                    username={user.username}
+                    games={userCommentedGames}
+                  />
+                ) : loggedInUser === userParam ? (
+                  <p>{loggedInUser}, go comment on some games!</p>
+                ) : (
+                  <p>{userParam} has not commented on any games!</p>
+                )}
+              </div>
+            </div>
           </div>
         );
       } else {
         // if user is not logged in but there's data to display
         return (
-          <div>
-            <h1>Welcome to {userParam}'s profile!</h1>
-            <FriendList
-              username={user.username}
-              friendCount={user.friendCount}
-              friends={user.friends}
-            />
-            <FavoriteGamesList
-              username={user.username}
-              games={userFavoriteGames}
-            />
-            <CommentList username={user.username} games={userCommentedGames} />
+          <div className="profile">
+            <div className="profile-header-not-me">
+              <h1>Welcome to {userParam}'s profile!</h1>
+            </div>
+            <div className="profile-content">
+              <div className="user-data">
+                {user.friendCount > 0 ? (
+                  <FriendList
+                    username={user.username}
+                    friendCount={user.friendCount}
+                    friends={user.friends}
+                  />
+                ) : (
+                  <p>{userParam} has not added any friends!</p>
+                )}
+                {user.gamesCount > 0 ? (
+                  <FavoriteGamesList
+                    username={user.username}
+                    games={userFavoriteGames}
+                  />
+                ) : (
+                  <p>{userParam} has not favorited any games!</p>
+                )}
+              </div>
+              {userCommentedGames && userCommentedGames.length > 0 ? (
+                <div className="user-comments">
+                  <CommentList
+                    username={user.username}
+                    games={userCommentedGames}
+                  />
+                </div>
+              ) : (
+                <div className="user-comments">
+                  <p>{userParam} has not commented on any games!</p>
+                </div>
+              )}
+            </div>
           </div>
         );
       }
     }
-  }
-
-  // if no data exits...
-  if (loggedIn) {
-    return (
-      <div>
-        {/* if logged in user = the username in the URL, display one header, if not, display another header and include add friend button */}
-        {loggedInUser === userParam ? (
-          <h1>Welcome to your profile, {loggedInUser}!</h1>
-        ) : (
-          <div>
-            <h1>Welcome to {userParam}'s profile!</h1>
-            <button
-              onClick={() => {
-                handleAddFriend(user._id);
-              }}
-            >
-              + Add Friend
-            </button>
-            {message && (
-              <div>
-                <p>{message}</p>
-              </div>
-            )}
-          </div>
-        )}
-        {/* if logged in user = the username in the URL, display a link to submit a game or don't if you're on another user's page */}
-        {loggedInUser === userParam ? (
-          <Link to="/submitgame">
-            Didn't see a game you like listed on the all games page? Submit A
-            Game!
-          </Link>
-        ) : null}
-        {loggedInUser === userParam ? (
-          <div>
-            <p>{loggedInUser}, make some friends!</p>
-            <p>{loggedInUser}, go favorite some games!</p>
-            <p>{loggedInUser}, go comment on some games!</p>
-          </div>
-        ) : (
-          <div>
-            <p>{userParam} has not added any friends!</p>
-            <p>{userParam} has not favorited any games!</p>
-            <p>{userParam} has not commented on any games!</p>
-          </div>
-        )}
-      </div>
-    );
-  } else {
-    return (
-      <div>
-        <h1>Welcome to {userParam}'s profile!</h1>
-        <p>{userParam} has not added any friends!</p>
-        <p>{userParam} has not favorited any games!</p>
-        <p>{userParam} has not commented on any games!</p>
-      </div>
-    );
   }
 };
 

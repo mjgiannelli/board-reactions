@@ -1,0 +1,29 @@
+.profile {
+  width: 90%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-header-me {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.profile-header-not-me {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+}
+
+.profile-header-not-me h1 {
+  margin-right: 1rem;
+}
+
+.profile-content {
+  display: flex;
+  justify-content: space-between;
+}

@@ -19,6 +19,8 @@ import GameCommentList from '../components/GameCommentList';
 import Auth from '../utils/auth';
 import AddCommentForm from '../components/AddCommentForm';
 
+import { capitalizeFirstLetter } from '../utils/helpers';
+
 const SingleGame = (props) => {
   const [message, setMessage] = useState(null);
 
@@ -81,7 +83,7 @@ const SingleGame = (props) => {
 
                 <CardContent>
                   <Typography gutterBottom variant="h4" component="div">
-                    {singleGame.game_name}
+                    {capitalizeFirstLetter(singleGame.game_name)}
                   </Typography>
                   <Typography gutterBottom variant="h5" component="div">
                     {singleGame.category}

@@ -17,6 +17,8 @@ import { useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 import { QUERY_GAMES } from "../utils/queries";
 
+import { capitalizeFirstLetter } from "../utils/helpers";
+
 // import { ADD_GAME } from '../utils/mutations'
 // import { useMutation } from '@apollo/client'
 
@@ -66,7 +68,7 @@ const AllGames = () => {
 
                   <CardContent>
                     <Typography gutterBottom variant="h4" component="div">
-                      {game.game_name}
+                      {capitalizeFirstLetter(game.game_name)}
                     </Typography>
 
                     <Typography gutterBottom variant="h5" component="div">

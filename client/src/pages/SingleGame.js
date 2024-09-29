@@ -12,7 +12,12 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import Box from '@mui/material/Box';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
-import { QUERY_GAME, QUERY_GAMES, QUERY_ME } from '../utils/queries';
+import {
+  QUERY_GAME,
+  QUERY_GAMES,
+  QUERY_ME,
+  QUERY_USER,
+} from '../utils/queries';
 import { ADD_FAVORITE, ADD_GAME_TO_USER } from '../utils/mutations';
 
 import GameCommentList from '../components/GameCommentList';
@@ -34,6 +39,17 @@ const SingleGame = (props) => {
   const { loading, data } = useQuery(QUERY_GAME, {
     variables: { gameId: gameId },
   });
+
+  const { loading: loadingUser, data: userData } = useQuery(QUERY_USER, {
+    variables: {
+      username: loggedInUser,
+    },
+  });
+
+  //set data to variable user
+  const user = userData?.user || {};
+
+  const favoritedGame = user?.games?.find((game) => game._id === gameId);
 
   const singleGame = data?.gamebyId || {};
 
@@ -70,7 +86,7 @@ const SingleGame = (props) => {
           alignItems="center"
         >
           <Grid item xs={12}>
-            {loading ? (
+            {loading || (loggedInUser && loadingUser) ? (
               <div>Loading...</div>
             ) : (
               <Card sx={{ maxWidth: 1000, maxHeight: 9999 }}>
@@ -99,7 +115,7 @@ const SingleGame = (props) => {
                   <Typography gutterBottom variant="h7" component="div">
                     {singleGame.game_description}
                   </Typography>
-                  {loggedInUser ? (
+                  {loggedInUser && !favoritedGame ? (
                     <IconButton
                       onClick={handleHeartClick}
                       aria-label="add to favorites"
@@ -111,6 +127,8 @@ const SingleGame = (props) => {
                         </div>
                       )}
                     </IconButton>
+                  ) : loggedInUser ? (
+                    <FavoriteIcon style={{ color: 'red' }} />
                   ) : null}
                 </CardContent>
               </Card>

@@ -1,23 +1,24 @@
-import * as React from "react";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Typography from "@mui/material/Typography";
-import { styled } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
-import CardActions from "@mui/material/CardActions";
-import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import * as React from 'react';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+import { styled } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import ShareIcon from '@mui/icons-material/Share';
+import CardActions from '@mui/material/CardActions';
+import Collapse from '@mui/material/Collapse';
+import IconButton from '@mui/material/IconButton';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-import { useQuery } from "@apollo/react-hooks";
-import { Link } from "react-router-dom";
-import { QUERY_GAMES } from "../utils/queries";
+import { useQuery } from '@apollo/react-hooks';
+import { Link } from 'react-router-dom';
+import { QUERY_GAMES, QUERY_USER } from '../utils/queries';
 
-import { capitalizeFirstLetter } from "../utils/helpers";
+import { capitalizeFirstLetter } from '../utils/helpers';
+import Auth from '../utils/auth';
 
 // import { ADD_GAME } from '../utils/mutations'
 // import { useMutation } from '@apollo/client'
@@ -26,16 +27,27 @@ const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
   return <IconButton {...other} />;
 })(({ theme, expand }) => ({
-  transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
-  marginLeft: "auto",
-  transition: theme.transitions.create("transform", {
+  transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
+  marginLeft: 'auto',
+  transition: theme.transitions.create('transform', {
     duration: theme.transitions.duration.shortest,
   }),
 }));
 
 const AllGames = () => {
-  const { loading, data } = useQuery(QUERY_GAMES);
-  const allGames = data?.games || {};
+  const { loading: loadingGames, data: gamesData } = useQuery(QUERY_GAMES);
+  const allGames = gamesData?.games || {};
+  const loggedInUsername = Auth.getLoggedInUsername();
+  // query user data with username
+  const { loading: loadingUser, data: userData } = useQuery(QUERY_USER, {
+    variables: {
+      username: loggedInUsername,
+    },
+  });
+
+  //set data to variable user
+  const user = userData?.user || {};
+  console.log('user: ', user);
 
   const [expandedId, setExpandedId] = React.useState(-1);
 
@@ -43,7 +55,7 @@ const AllGames = () => {
     setExpandedId(expandedId === i ? -1 : i);
   };
 
-  if (loading) {
+  if (loadingGames || (loggedInUsername && loadingUser)) {
     return <div>Loading...</div>;
   }
 
@@ -83,12 +95,6 @@ const AllGames = () => {
                   </CardContent>
 
                   <CardActions disableSpacing>
-                    <IconButton aria-label="add to favorites">
-                      <FavoriteIcon />
-                    </IconButton>
-                    <IconButton aria-label="share">
-                      <ShareIcon />
-                    </IconButton>
                     <ExpandMore
                       expand={expandedId === i}
                       onClick={() => handleExpandClick(i)}

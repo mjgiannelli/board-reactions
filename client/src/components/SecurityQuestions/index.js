@@ -17,7 +17,6 @@ const SecurityQuestions = (props) => {
 
     const user = data?.user || {};
 
-    console.log(user)
 
     if (loading) {
         return (

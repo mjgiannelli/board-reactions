@@ -33,7 +33,6 @@ const FriendList = ({ friendCount, username, friends }) => {
     // get username of logged in user
     const loggedInUser = Auth.getLoggedInUsername();
 
-    console.log('friends', friends)
 
     const removeFriend = async (friendId) => {
 

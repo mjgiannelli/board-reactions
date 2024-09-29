@@ -9,7 +9,6 @@ import React from 'react';
 
 const Nav = () => {
   const loggedIn = Auth.loggedIn();
-  console.log(loggedIn);
 
   const loggedInUsername = Auth.getLoggedInUsername();
   return (

@@ -1,65 +1,46 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { useMutation } from "@apollo/client";
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useMutation } from '@apollo/client';
 
-import Auth from "../utils/auth";
-import { ADD_USER } from "../utils/mutations";
+import Auth from '../utils/auth';
+import { ADD_USER } from '../utils/mutations';
 
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import { styled } from "@mui/material/styles";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import InputLabel from "@mui/material/InputLabel";
-// import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-// import Select from "@mui/material/Select";
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import { styled } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
   padding: theme.spacing(2),
-  textAlign: "center",
+  textAlign: 'center',
   color: theme.palette.text.secondary,
 }));
 
 const Signup = () => {
   const [addUser] = useMutation(ADD_USER);
-  const securityQuestionsOne = [
-    "In what city were you born?",
-    "What is the name of your favorite pet?",
+
+  const securityQuestions = [
+    'In what city were you born?',
+    'What is the name of your favorite pet?',
     "What is your mother's maiden name?",
-    "What high school did you attend?",
-    "What was the make of your first car?",
+    'What high school did you attend?',
+    'What was the make of your first car?',
   ];
 
-  const [securityQuestionsTwo, setSecurityQuestionsTwo] = useState([
-    "In what city were you born?",
-    "What is the name of your favorite pet?",
-    "What is your mother's maiden name?",
-    "What high school did you attend?",
-    "What was the make of your first car?",
-  ]);
-
   const [formState, setFormState] = useState({
-    username: "",
-    email: "",
-    password: "",
-    questionOne: "",
-    answerOne: "",
-    questionTwo: "",
-    answerTwo: "",
+    username: '',
+    email: '',
+    password: '',
+    questionOne: '',
+    answerOne: '',
+    questionTwo: '',
+    answerTwo: '',
   });
-
-  // update security questions 2 array to remove first question once user selects first question
-  useEffect(() => {
-    const { questionOne } = formState;
-    const updatedSecurityTwoQuestions = securityQuestionsOne.filter(
-      (question) => question !== questionOne
-    );
-
-    setSecurityQuestionsTwo(updatedSecurityTwoQuestions);
-  }, [formState.questionOne]);
 
   // collect user inputs
   const handleChange = (event) => {
@@ -72,7 +53,7 @@ const Signup = () => {
   };
 
   // collect questions user selects for security questions
-  const handleClick = (event) => {
+  const handleSelection = (event) => {
     const { id, value } = event.target;
 
     setFormState({
@@ -103,7 +84,7 @@ const Signup = () => {
 
   return (
     <section>
-      <Box component="form" sx={{ flexGrow: 1, borderBottom:"none" }}>
+      <Box component="form" sx={{ flexGrow: 1, borderBottom: 'none' }}>
         <Grid
           container
           spacing={0}
@@ -124,17 +105,6 @@ const Signup = () => {
 
           <Grid item xs={12}>
             <form onSubmit={handleFormSubmit}>
-              {/* <div>
-                    <label htmlFor="username">Username:</label>
-                    <input
-                        name='username'
-                        type="username"
-                        id="username"
-                        placeholder="Username"
-                        onChange={handleChange}
-                    />
-                </div> */}
-
               <Item>
                 <TextField
                   id="username"
@@ -146,17 +116,6 @@ const Signup = () => {
                   htmlFor="username"
                 />
               </Item>
-              {/* 
-                <div>
-                    <label htmlFor="email">E-mail:</label>
-                    <input
-                        name='email'
-                        type="email"
-                        id="email"
-                        placeholder="Email"
-                        onChange={handleChange}
-                    />
-                </div> */}
 
               <Item>
                 <TextField
@@ -169,17 +128,6 @@ const Signup = () => {
                   htmlFor="email"
                 />
               </Item>
-
-              {/* <div>
-                    <label htmlFor="password">Password:</label>
-                    <input
-                        name='password'
-                        type="password"
-                        id="password"
-                        placeholder="Password"
-                        onChange={handleChange}
-                    />
-                </div> */}
 
               <Item>
                 <TextField
@@ -195,30 +143,35 @@ const Signup = () => {
               </Item>
 
               <Item>
-              <FormControl sx={{ m: 2, width: 275 }}>
-                <InputLabel value="select" sx={{ m: 1, }}>Select Security Question 1</InputLabel>
-                <select sx={{ fontSize: 11, fontWeight: 'medium' }} id="questionOne" onClick={handleClick}>
-                  {securityQuestionsOne.map((question, index) => {
-                    return (
-                      <option sx={{ fontSize: 15 }} value={question} key={index} id={index}>
-                        {question}
-                      </option>
-                    );
-                  })}
-                </select>
+                <FormControl sx={{ m: 2, width: 275 }}>
+                  <InputLabel value="select" sx={{ m: 1 }}>
+                    Select Security Question 1
+                  </InputLabel>
+                  <select
+                    sx={{ fontSize: 11, fontWeight: 'medium' }}
+                    id="questionOne"
+                    onChange={handleSelection}
+                  >
+                    <option value={''}>---</option>
+                    {securityQuestions
+                      .filter((q) => formState.questionTwo !== q)
+                      .map((question, index) => {
+                        return (
+                          <option
+                            sx={{ fontSize: 15 }}
+                            value={question}
+                            key={index}
+                            id={index}
+                          >
+                            {question}
+                          </option>
+                        );
+                      })}
+                  </select>
                 </FormControl>
               </Item>
               <Item>
-                  
-                {/* <label htmlFor="answerOne"></label>
-                <input
-                  name="answerOne"
-                  type="answerOne"
-                  id="answerOne"
-                  placeholder="Answer"
-                  onChange={handleChange}
-                /> */}
-                                <TextField
+                <TextField
                   id="answerOne"
                   label="Answer 1"
                   placeholder="Answer 1"
@@ -231,34 +184,36 @@ const Signup = () => {
 
               <Item>
                 <FormControl sx={{ m: 2, width: 275 }}>
-                  <InputLabel sx={{ m: 1, verticalAlign: 'center' }} value="select" >
+                  <InputLabel
+                    sx={{ m: 1, verticalAlign: 'center' }}
+                    value="select"
+                  >
                     Select Security Question 2
                   </InputLabel>
-                  <select sx={{ fontSize: 11, fontWeight: 'medium' }}
+                  <select
+                    sx={{ fontSize: 11, fontWeight: 'medium' }}
                     id="questionTwo"
-                    onClick={handleClick}
+                    onChange={handleSelection}
                   >
-                    {/* <option value='select'>Select Security Question 2</option> */}
-                    {securityQuestionsTwo.map((question, index) => {
-                      return (
-                        <option sx={{ fontSize: 15 }} value={question} key={index}>
-                          {question}
-                        </option>
-                      );
-                    })}
+                    <option value={''}>---</option>
+                    {securityQuestions
+                      .filter((q) => formState.questionOne !== q)
+                      .map((question, index) => {
+                        return (
+                          <option
+                            sx={{ fontSize: 15 }}
+                            value={question}
+                            key={index}
+                          >
+                            {question}
+                          </option>
+                        );
+                      })}
                   </select>
                 </FormControl>
               </Item>
               <Item>
-                {/* <label htmlFor="answerTwo"></label>
-                <input
-                  name="answerTwo"
-                  type="answerTwo"
-                  id="answerTwo"
-                  placeholder="Answer"
-                  onChange={handleChange}
-                /> */}
-                                                <TextField
+                <TextField
                   id="answerTwo"
                   label="Answer 2"
                   placeholder="Answer 2"
@@ -269,8 +224,8 @@ const Signup = () => {
                 />
               </Item>
               <Item>
-                {/* <button type="submit">Signup</button> */}
-                <Button sx={{ width: 200 }}
+                <Button
+                  sx={{ width: 200 }}
                   onClick={handleFormSubmit}
                   variant="contained"
                   color="success"

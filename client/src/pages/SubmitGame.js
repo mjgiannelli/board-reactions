@@ -346,14 +346,6 @@ const SubmitGame = () => {
   // submit form
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    console.log('submit')
-console.log(game_name)
-console.log(category)
-console.log('min players', typeof min_number_of_players )
-console.log('max plaerys', typeof max_number_of_players)
-console.log('min time', typeof avg_min_game_time)
-console.log('max time', typeof avg_max_game_time )
-console.log(game_description)
     try {
       const mutationResponse = await addGame({
         variables: {

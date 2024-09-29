@@ -1,37 +1,38 @@
-import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { useQuery, useMutation } from "@apollo/client";
+import { useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { useQuery, useMutation } from '@apollo/client';
 
-import { QUERY_USER } from "../utils/queries";
-import { ADD_FRIEND } from "../utils/mutations";
-import FriendList from "../components/FriendList";
-import FavoriteGamesList from "../components/FavoriteGamesList";
-import CommentList from "../components/CommentList";
-import Auth from "../utils/auth";
+import { QUERY_USER } from '../utils/queries';
+import { ADD_FRIEND, REMOVE_FRIEND } from '../utils/mutations';
+import FriendList from '../components/FriendList';
+import FavoriteGamesList from '../components/FavoriteGamesList';
+import CommentList from '../components/CommentList';
+import Auth from '../utils/auth';
 
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import { styled } from "@mui/material/styles";
-import Paper from "@mui/material/Paper";
+import { styled } from '@mui/material/styles';
+import Paper from '@mui/material/Paper';
 
 const Item = styled(Paper)(({ theme }) => ({
-    ...theme.typography.body2,
-    padding: theme.spacing(2),
-    textAlign: "center",
-    color: theme.palette.text.secondary,
-  }));
+  ...theme.typography.body2,
+  padding: theme.spacing(2),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
 
-  const linkStyle = {
-    margin: "1rem",
-    textDecoration: "none",
-    color: 'blue'
-  };
+const linkStyle = {
+  margin: '1rem',
+  textDecoration: 'none',
+  color: 'blue',
+};
 
 const Profile = () => {
   const [message, setMessage] = useState(null);
 
   const [addFriend] = useMutation(ADD_FRIEND);
+  const [deleteFriend] = useMutation(REMOVE_FRIEND);
 
   // get username of logged in user
   const loggedInUser = Auth.getLoggedInUsername();
@@ -43,14 +44,35 @@ const Profile = () => {
   const { username: userParam } = useParams();
 
   // query user data with username
-  const { loading, data } = useQuery(QUERY_USER, {
-    variables: {
-      username: userParam,
+  const { loading: profileUserLoading, data: profileUserData } = useQuery(
+    QUERY_USER,
+    {
+      variables: {
+        username: userParam,
+      },
     },
-  });
+  );
 
   //set data to variable user
-  const user = data?.user || {};
+  const user = profileUserData?.user || {};
+  console.log('profile user: ', user);
+
+  // query user data with username
+  const { loading: loggedInUserLoading, data: loggedInUserData } = useQuery(
+    QUERY_USER,
+    {
+      variables: {
+        username: loggedInUser,
+      },
+    },
+  );
+
+  //set data to variable user
+  const myUserData = loggedInUserData?.user || {};
+
+  const isMyFriend = myUserData?.friends?.find(
+    (friend) => friend._id === user._id,
+  );
 
   const handleAddFriend = async (friendId) => {
     try {
@@ -58,7 +80,22 @@ const Profile = () => {
         variables: { friendId: friendId },
       });
 
-      setMessage("Friend Added!");
+      setMessage('Friend Added!');
+
+      setTimeout(() => {
+        setMessage(null);
+      }, 2000);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleRemoveFriend = async (friendId) => {
+    try {
+      await deleteFriend({
+        variables: { friendId: friendId },
+      });
+      setMessage('Friend Removed!');
 
       setTimeout(() => {
         setMessage(null);
@@ -69,12 +106,12 @@ const Profile = () => {
   };
 
   // if data is still loading, display a loading div
-  if (loading) {
+  if (profileUserLoading) {
     return <div>Loading...</div>;
   }
 
   // if not loading and data is returned...
-  if (!loading) {
+  if (!profileUserLoading) {
     //check if the user has games
     if (user.games) {
       let userFavoriteGames = [];
@@ -82,7 +119,7 @@ const Profile = () => {
 
       // create a variable called favoriteGames and filter out any games where favorite Count is 0;
       const favoriteGames = user.games.filter(
-        (game) => game.favoritesCount !== 0
+        (game) => game.favoritesCount !== 0,
       );
 
       // for all the games that have favorites, push only the games the current user favorited to userFavoriteGames array
@@ -96,7 +133,7 @@ const Profile = () => {
 
       // create a variable called commentedGames and filter out any games where comment Count is 0;
       const commentedGames = user.games.filter(
-        (game) => game.commentCount !== 0
+        (game) => game.commentCount !== 0,
       );
 
       // for all the games that have comments, push only the games the current user commented on to usercommentedGames array
@@ -122,47 +159,64 @@ const Profile = () => {
               >
                 {/* if logged in user = the username in the URL, display one header, if not, display another header and include add friend button */}
                 {loggedInUser === userParam ? (
-
-                  <h1>Welcome to your profile, <span className="username-style2">{loggedInUser}</span>!</h1>
+                  <h1>
+                    Welcome to your profile,{' '}
+                    <span className="username-style2">{loggedInUser}</span>!
+                  </h1>
                 ) : (
-                    <Grid item xs={12}>
-<Item>
-                    <h1>Welcome to {userParam}'s profile!</h1>
+                  <Grid item xs={12}>
+                    <Item>
+                      <h1>Welcome to {userParam}'s profile!</h1>
                     </Item>
                     <Item>
-                    <Button variant="contained" color="success"
-                      onClick={() => {
-                        handleAddFriend(user._id);
-                      }}
-                    >
-                      + Add Friend
-                    </Button>
-                    {message && (
-                      <div>
-                        <p>{message}</p>
-                      </div>
-                    )}
+                      {isMyFriend ? (
+                        <Button
+                          variant="contained"
+                          color="error"
+                          onClick={() => {
+                            handleRemoveFriend(user._id);
+                          }}
+                        >
+                          + Remove Friend
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="contained"
+                          color="success"
+                          onClick={() => {
+                            handleAddFriend(user._id);
+                          }}
+                        >
+                          + Add Friend
+                        </Button>
+                      )}
+
+                      {message && (
+                        <div>
+                          <p>{message}</p>
+                        </div>
+                      )}
                     </Item>
                   </Grid>
                 )}
                 {/* if logged in user = the username in the URL, display a link to submit a game or don't if you're on another user's page */}
                 {loggedInUser === userParam ? (
                   <Grid item xs={12}>
-                      <Item>
-                  <Link style={linkStyle} to="/submitgame">
-                    Didn't see a game you like listed on the all games page?
-                    Submit A Game!
-                  </Link>
-                  </Item>
+                    <Item>
+                      <Link style={linkStyle} to="/submitgame">
+                        Didn't see a game you like listed on the all games page?
+                        Submit A Game!
+                      </Link>
+                    </Item>
                   </Grid>
                 ) : null}
-<Grid item xs={12}>
-                <FriendList
-                  username={user.username}
-                  friendCount={user.friendCount}
-                  friends={user.friends}
-                />
-</Grid>
+                <Grid item xs={12}>
+                  <FriendList
+                    username={user.username}
+                    friendCount={user.friendCount}
+                    friends={user.friends}
+                  />
+                </Grid>
                 <FavoriteGamesList
                   username={user.username}
                   games={userFavoriteGames}

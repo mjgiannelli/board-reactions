@@ -47,7 +47,6 @@ const AllGames = () => {
 
   //set data to variable user
   const user = userData?.user || {};
-  console.log('user: ', user);
 
   const [expandedId, setExpandedId] = React.useState(-1);
 

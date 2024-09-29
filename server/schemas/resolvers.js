@@ -144,7 +144,6 @@ const resolvers = {
         //favorite a game
         favoriteGame: async(parents, {gameId}, context) => {
             if(context.user){
-                console.log(context.user.username)
                 const updatedGame = await Game.findByIdAndUpdate(
                     {_id: gameId},
                     {$addToSet: {favorites:{username: context.user.username}}},
@@ -156,9 +155,7 @@ const resolvers = {
         },
         //add a comment to a game 
         addComment: async (parent,{gameId, commentText},context) => {
-            console.log(context.user);
             if(context.user){
-                console.log(commentText);
                 const comment = await Comment.create({commentText,username:context.user.username});
 
                 const gameData = await Game.findByIdAndUpdate(

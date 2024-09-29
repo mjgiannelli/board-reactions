@@ -16,16 +16,19 @@ const Home = () => {
   useEffect(() => {
     if (loggedIn) {
       if (loggedInUsername) {
-        console.log('logged in user name: ', loggedInUsername)
         window.location.assign(`/profile/${loggedInUsername}`);
       }
     } else {
       setLoadingLogin(false);
     }
   }, [loggedIn, loggedInUsername]);
-  console.log('logged in user: ', loggedInUsername);
+
+  const HandleImgClick = (game) => {
+    window.location.assign(`/games/${game._id}`);
+  };
+
   return (
-    <div>
+    <div style={{width: "90%", margin: "auto"}}>
       <h1 className="homepageTitle">BOARD REACTIONS!</h1>
       <Box>
         {loading || loadingLogin ? (
@@ -41,11 +44,13 @@ const Home = () => {
             {allGames.map((game, i) => (
               <Grid i xs={1} key={game.game_name}>
                 <img
+                  className="game-img"
                   src={require(`../assets/${game.image}.jpg`).default}
                   alt={game.game_name}
                   loading="lazy"
                   width="100%"
                   height="100%"
+                  onClick={() => HandleImgClick(game)}
                 />
               </Grid>
             ))}

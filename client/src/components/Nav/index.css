@@ -25,12 +25,15 @@
 }
 
 .navigation-menu a {
-  cursor: pointer;
   color: #e5e5e5;
   text-transform: uppercase;
   text-decoration: none;
   display: block;
   font-size: 1rem;
+}
+
+.navigation-menu a:hover {
+  cursor: pointer;
 }
 
 .content {
